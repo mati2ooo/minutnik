@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2Minutniki</title>
+<link rel="stylesheet" href="minutnik2.css">
+</head>
+<body>
+
+<h1>Magnus Carlsen is the man 😎</h1>
+
+<div class="timers-container">
+
+	<div class="timer" id="timer1">
+		<div class="timer-name" onclick="editName(this)">Minutnik 1</div>
+		<div class="time-display">00:00:00</div>
+		<div>
+			<input type="number" min="0" placeholder="Godziny" class="hours" />
+			<input type="number" min="0" placeholder="Minuty" class="minutes" />
+			<input type="number" min="0" placeholder="Sekundy" class="seconds" />
+		</div>
+		<div class="buttons">
+			<button onclick="addTime(0,-300)">-5 min</button>
+			<button onclick="addTime(0,600)">+10 min</button>
+			<button onclick="addTime(0,3600)">+60 min</button>
+		</div>
+		<div class="buttons">
+			<button onclick="resetTimer(0)">Reset</button>
+			<button onclick="stopTimer(0)">Stop</button>
+			<button onclick="startTimer(0, true)">Start</button>
+		</div>
+	</div>
+
+	<div class="timer" id="timer2">
+		<div class="timer-name" onclick="editName(this)">Minutnik 2</div>
+		<div class="time-display">00:00:00</div>
+		<div>
+			<input type="number" min="0" placeholder="Godziny" class="hours" />
+			<input type="number" min="0" placeholder="Minuty" class="minutes" />
+			<input type="number" min="0" placeholder="Sekundy" class="seconds" />
+		</div>
+		<div class="buttons">
+			<button onclick="addTime(1,-300)">-5 min</button>
+			<button onclick="addTime(1,600)">+10 min</button>
+			<button onclick="addTime(1,3600)">+60 min</button>
+		</div>
+		<div class="buttons">
+			<button onclick="resetTimer(1)">Reset</button>
+			<button onclick="stopTimer(1)">Stop</button>
+			<button onclick="startTimer(1, true)">Start</button>
+		</div>
+	</div>
+
+	<div class="timer" id="timer3">
+		<div class="timer-name" onclick="editName(this)">Minutnik 3</div>
+		<div class="time-display">00:00:00</div>
+		<div>
+			<input type="number" min="0" placeholder="Godziny" class="hours" />
+			<input type="number" min="0" placeholder="Minuty" class="minutes" />
+			<input type="number" min="0" placeholder="Sekundy" class="seconds" />
+		</div>
+		<div class="buttons">
+			<button onclick="addTime(2,-300)">-5 min</button>
+			<button onclick="addTime(2,600)">+10 min</button>
+			<button onclick="addTime(2,3600)">+60 min</button>
+		</div>
+		<div class="buttons">
+			<button onclick="resetTimer(2)">Reset</button>
+			<button onclick="stopTimer(2)">Stop</button>
+			<button onclick="startTimer(2, true)">Start</button>
+		</div>
+	</div>
+
+</div>
+
+<div class="volume-control">
+	<div class="slider-wrapper">
+		<label for="volume">🔊 Głośność alarmu:</label>
+		<input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+		<span id="volume-value">050%</span>
+	</div>
+    <button onclick="testAlarm()">Test alarmu</button>
+</div>
+
+<audio id="alarmSound" src="https://www.myinstants.com/media/sounds/ba-dum-tss.mp3" preload="auto"></audio>
+
+<script src="storage.js"></script>
+<script src="display2.js"></script>
+</body>
+</html>
