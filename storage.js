@@ -4,9 +4,16 @@ function saveTimers() {
     const state = timers.map(timer => {
         const container = document.getElementById(timer.elementId);
         const name = container.querySelector(".timer-name").textContent;
+        // Get input values
+        const hours = container.querySelector('.hours').value;
+        const minutes = container.querySelector('.minutes').value;
+        const seconds = container.querySelector('.seconds').value;
         return {
             finishTimestamp: timer.finishTimestamp,
-            name: name
+            name: name,
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds
         };
     });
     localStorage.setItem('timersState', JSON.stringify(state));
@@ -30,7 +37,13 @@ function loadTimers() {
             if (timers[i]) {
                 timers[i].finishTimestamp = t.finishTimestamp;
                 timers[i].name = t.name;
-
+                // Restore input values
+                const container = document.getElementById(timers[i].elementId);
+                if (container) {
+                    if (container.querySelector('.hours')) container.querySelector('.hours').value = t.hours || '';
+                    if (container.querySelector('.minutes')) container.querySelector('.minutes').value = t.minutes || '';
+                    if (container.querySelector('.seconds')) container.querySelector('.seconds').value = t.seconds || '';
+                }
                 if (t.finishTimestamp > Date.now()) {
                     startTimer(i, false); // Wznów odliczanie z pamięci
                 }
