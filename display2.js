@@ -81,6 +81,10 @@ function resetTimer(index) {
 
 function addTime(index, seconds) {
     const timer = timers[index];
+    // If timer is over and user tries to subtract time, do nothing
+    if ((!timer.finishTimestamp || timer.finishTimestamp <= Date.now()) && seconds < 0) {
+        return;
+    }
     if (!timer.finishTimestamp || timer.finishTimestamp <= Date.now()) {
         timer.finishTimestamp = Date.now();
     }
