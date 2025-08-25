@@ -1,7 +1,15 @@
+
 let timers = [];
 const alarm = document.getElementById("alarmSound");
 const volumeControl = document.getElementById("volume");
 const volumeValue = document.getElementById("volume-value");
+const timersContainer = document.getElementById("timers-container");
+const addTimerBtn = document.getElementById("add-timer-btn");
+
+// Request notification permission on load
+if (window.Notification && Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
 
 // Suwak głośności
 volumeControl.addEventListener("input", () => {
@@ -53,6 +61,14 @@ function startTimer(index, fromInput = true) {
             alarm.currentTime = 0;
             alarm.volume = volumeControl.value;
             alarm.play().catch(e => console.log("Autoplay blocked:", e));
+
+            // Desktop notification
+            if (window.Notification && Notification.permission === "granted") {
+                new Notification("Minutnik skończony!", {
+                    body: timer.name ? `Minutnik: ${timer.name}` : "Twój minutnik się skończył!",
+                    icon: "https://cdn-icons-png.flaticon.com/512/992/992700.png" // Example icon
+                });
+            }
             return;
         }
         updateDisplay(index, remaining);
@@ -163,7 +179,6 @@ function finishEdit(input,current){
     span.textContent=newName;
     span.onclick=()=>editName(span);
     input.replaceWith(span);
-    
     // Zapisz zmienioną nazwę w obiekcie timers
     const timerId = span.closest('.timer').id;
     const timerIndex = timers.findIndex(t => t.elementId === timerId);
@@ -172,6 +187,77 @@ function finishEdit(input,current){
     }
     saveTimers(); // Zapisz po zmianie nazwy
 }
+
+// Dynamic timer creation/removal
+function createTimerObject(index) {
+    return {
+        intervalId: null,
+        elementId: `timer${index+1}`,
+        finishTimestamp: null,
+        name: `Minutnik ${index+1}`
+    };
+}
+
+function renderTimers() {
+    timersContainer.innerHTML = "";
+    timers.forEach((timer, i) => {
+        const timerDiv = document.createElement("div");
+        timerDiv.className = "timer";
+        timerDiv.id = timer.elementId;
+        timerDiv.innerHTML = `
+            <button class="remove-timer-btn" onclick="removeTimer(${i})" title="Usuń minutnik">&times;</button>
+            <div class="timer-name" onclick="editName(this)">${timer.name}</div>
+            <div class="time-display">00:00:00</div>
+            <div>
+                <input type="number" min="0" placeholder="Godziny" class="hours" />
+                <input type="number" min="0" placeholder="Minuty" class="minutes" />
+                <input type="number" min="0" placeholder="Sekundy" class="seconds" />
+            </div>
+            <div class="buttons">
+                <button onclick="addTime(${i},-300)">-5 min</button>
+                <button onclick="addTime(${i},600)">+10 min</button>
+                <button onclick="addTime(${i},3600)">+60 min</button>
+            </div>
+            <div class="buttons">
+                <button onclick="resetTimer(${i})">Reset</button>
+                <button onclick="stopTimer(${i})">Stop</button>
+                <button onclick="startTimer(${i}, true)">Start</button>
+            </div>
+        `;
+        timersContainer.appendChild(timerDiv);
+    });
+}
+
+function addTimer() {
+    timers.push(createTimerObject(timers.length));
+    renderTimers();
+    saveTimers();
+}
+
+function removeTimer(index) {
+    if (timers.length <= 1) return; // Always keep at least one timer
+    stopTimer(index);
+    timers.splice(index, 1);
+    // Re-index elementIds and names
+    timers.forEach((t, i) => {
+        t.elementId = `timer${i+1}`;
+        t.name = t.name || `Minutnik ${i+1}`;
+    });
+    renderTimers();
+    saveTimers();
+}
+
+addTimerBtn.addEventListener("click", addTimer);
+
+// Initial setup
+document.addEventListener('DOMContentLoaded', () => {
+    if (timers.length === 0) {
+        timers.push(createTimerObject(0));
+        timers.push(createTimerObject(1));
+        timers.push(createTimerObject(2));
+    }
+    renderTimers();
+});
 
 // Inicjalizacja: Wczytaj stan przy załadowaniu strony
 document.addEventListener('DOMContentLoaded', loadTimers);
